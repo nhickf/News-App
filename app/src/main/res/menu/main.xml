@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:title="Feedback"
+        android:id="@+id/menu_add"
+        android:orderInCategory="10"
+        app:showAsAction="never"
+        android:icon="@drawable/ic_feedback"/>
+    <item
+        android:id="@+id/menu_search"
+        android:title="search"
+        android:orderInCategory="20"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_search"/>
+</menu>
