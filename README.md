@@ -7,4 +7,3 @@ was created using MVVM architectural pattern
 - Retrofit 2 for requesting the news to api
 - Glide for effecient loading and offline persistence of images
 - Room Database for offline persistence of news
-- 
