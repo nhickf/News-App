@@ -1,6 +1,5 @@
 # News-App
-A sample application where you can browser the latest news head line in the philippines by using https://newsapi.org/v2/ this app   
-was created using MVVM architectural pattern
+A sample application where you can browser the latest news head line in the philippines by using https://newsapi.org/v2/ this app was created using MVVM architectural pattern
 
 # Library Used
 - Lifecycle Architecture Component for ViewModel and LiveData programming approach
