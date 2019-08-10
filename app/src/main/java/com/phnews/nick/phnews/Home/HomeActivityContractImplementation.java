@@ -10,10 +10,10 @@ import android.net.NetworkInfo;
 import com.phnews.nick.phnews.IConnectivity;
 import com.phnews.nick.phnews.News.NewsActivity;
 
-public class HomeActivityImplementation implements IHomeActivity , IConnectivity {
+public class HomeActivityContractImplementation implements IHomeActivityContract, IConnectivity {
 
 
-    public HomeActivityImplementation() { }
+    public HomeActivityContractImplementation() { }
 
     @Override
     public void alertDialog(final Context context) {
@@ -29,7 +29,7 @@ public class HomeActivityImplementation implements IHomeActivity , IConnectivity
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        NewsActivity.launch(context,which);
+
                     }
                 })
                 .create()

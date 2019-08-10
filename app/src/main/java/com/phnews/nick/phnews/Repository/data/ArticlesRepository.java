@@ -28,4 +28,12 @@ public class ArticlesRepository {
         new insertArticles(articlesDao).execute(articles);
 
     }
+
+    public LiveData<List<Articles>> getExactArticles(String searchValue){
+        return articlesDao.getExactArticles(searchValue);
+    }
+
+    public LiveData<List<Articles>> getSearchArticles(String searchValues){
+        return articlesDao.getSeartchArticles(searchValues);
+    }
 }

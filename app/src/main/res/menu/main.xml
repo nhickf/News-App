@@ -12,6 +12,7 @@
         android:id="@+id/menu_search"
         android:title="search"
         android:orderInCategory="20"
-        app:showAsAction="always"
+        app:showAsAction="ifRoom|collapseActionView"
+        app:actionViewClass="android.support.v7.widget.SearchView"
         android:icon="@drawable/ic_search"/>
 </menu>

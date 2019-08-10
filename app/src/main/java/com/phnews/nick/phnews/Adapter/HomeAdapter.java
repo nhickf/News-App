@@ -1,78 +1,78 @@
 package com.phnews.nick.phnews.Adapter;
 
 import android.annotation.SuppressLint;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.analytics.FirebaseAnalytics;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 import com.phnews.nick.phnews.Entities.Articles;
-import com.phnews.nick.phnews.Home.HomeActivityImplementation;
-import com.phnews.nick.phnews.News.NewsActivity;
+import com.phnews.nick.phnews.Home.IHomeActivityPresenter;
+import com.phnews.nick.phnews.IItemInteraction;
 import com.phnews.nick.phnews.R;
-import com.phnews.nick.phnews.utils.DateUtils;
+import com.phnews.nick.phnews.databinding.ActivityNewsCardviewBinding;
 
 import java.util.List;
 
 public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewAdapter> {
 
     private List<Articles> articlesList;
-    static class HomeViewAdapter extends RecyclerView.ViewHolder {
-        ImageView imageView;
-        TextView tvTitle;
-        TextView tvAuthor;
-        TextView tvTime;
-        TextView tvDetails;
+    private RequestOptions requestOptions;
+    private IHomeActivityPresenter presenter;
 
-        HomeViewAdapter(View itemView) {
-            super(itemView);
+    public HomeAdapter(IHomeActivityPresenter presenter) {
+        this.presenter = presenter;
+        requestOptions = new RequestOptions().placeholder(R.drawable.ic_image_grey)
+                .centerCrop();
+    }
+
+    static class HomeViewAdapter extends RecyclerView.ViewHolder {
+        ActivityNewsCardviewBinding activityNewsCardviewBinding;
+        ImageView imageView;
+
+        HomeViewAdapter(ActivityNewsCardviewBinding activityNewsCardviewBinding) {
+            super(activityNewsCardviewBinding.getRoot());
+            this.activityNewsCardviewBinding = activityNewsCardviewBinding;
             imageView = itemView.findViewById(R.id.cardView_textView_image);
-            tvTitle = itemView.findViewById(R.id.cardView_textView_title);
-            tvTime = itemView.findViewById(R.id.cardView_textView_time);
-            tvDetails = itemView.findViewById(R.id.cardView_textView_details);
-            tvAuthor = itemView.findViewById(R.id.cardView_textView_author);
         }
+        public void bind(Articles articles, IHomeActivityPresenter presenter) {
+            activityNewsCardviewBinding.setNewsarticles(articles);
+            activityNewsCardviewBinding.setPresenter(presenter);
+            activityNewsCardviewBinding.executePendingBindings();
+        }
+
     }
 
     @NonNull
     @Override
     public HomeViewAdapter onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.activity_news_cardview, parent, false);
-        return new HomeViewAdapter(view);
+       LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+
+        ActivityNewsCardviewBinding activityNewsCardviewBinding = ActivityNewsCardviewBinding.inflate(
+            layoutInflater,parent,false);
+
+        return new HomeViewAdapter(activityNewsCardviewBinding);
     }
 
+
+
     @Override
-    public void onBindViewHolder(@NonNull HomeViewAdapter holder, @SuppressLint("RecyclerView") final int position) {
+    public void onBindViewHolder(@NonNull final HomeViewAdapter holder, @SuppressLint("RecyclerView") final int position) {
         if (articlesList != null) {
             final Articles newsArticles = articlesList.get(position);
-            Glide.with(holder.imageView.getContext()).load(newsArticles.getUrlToImage())
+            Glide.with(holder.imageView.getContext())
+                    .applyDefaultRequestOptions(requestOptions)
+                    .load(newsArticles.getUrlToImage())
+                    .transition(DrawableTransitionOptions.withCrossFade())
                     .into(holder.imageView);
-            holder.tvTitle.setText(newsArticles.getTitle());
-            holder.tvTime.setText(DateUtils.formatNewsApiDate(newsArticles.getPublishedAt()));
-            holder.tvDetails.setText(newsArticles.getDescription());
-            holder.tvAuthor.setText(newsArticles.getAuthor());
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    HomeActivityImplementation newActivityImplementation = new HomeActivityImplementation();
-                    if (newActivityImplementation.isOnline(v.getContext())){
-                        FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(v.getContext());
-                        Bundle bundle = new Bundle();
-                        bundle.putString("index", String.valueOf(position));
-                        firebaseAnalytics.logEvent("cardClicked", bundle);
-                        NewsActivity.launch(v.getContext(), position);
-                    }else{
-                        newActivityImplementation.alertDialog(v.getContext());
-                    }
-                }
-            });
+
+            holder.bind(newsArticles,presenter);
+
         }
     }
 
@@ -80,9 +80,8 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.HomeViewAdapte
     public int getItemCount() {
         if (articlesList != null) {
             return articlesList.size();
-        } else {
-            return 0;
         }
+        return 0;
     }
     public void setArticlesList(List<Articles> articlesList) {
         this.articlesList = articlesList;

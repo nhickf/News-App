@@ -10,5 +10,7 @@ public interface IArticleRespository {
 
     interface show{
         LiveData<List<Articles>> getArticles();
+        LiveData<List<Articles>> getExactArticles(String searchValue);
+        LiveData<List<Articles>> getSearchArticles(String searchValue);
     }
 }

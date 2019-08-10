@@ -3,8 +3,12 @@ package com.phnews.nick.phnews.News;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.webkit.WebResourceError;
@@ -19,66 +23,73 @@ import android.widget.Toast;
 
 import com.phnews.nick.phnews.NewStore;
 import com.phnews.nick.phnews.R;
+import com.phnews.nick.phnews.databinding.ActivityNewsBinding;
 
 public class NewsActivity extends AppCompatActivity {
-    private WebView webView;
-    private ProgressBar progressBar;
-    private static final String KEY_INDEX ="news_index";
+    public static final String KEY_INDEX = "news_url";
     private NewsActivityImplementation newActivityImplementation;
-    private ImageView imageView;
-    private TextView textView;
+    private ActivityNewsBinding activityNewsBinding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_news);
-       
-        webView = findViewById(R.id.WebView_activity_news);
-        progressBar = findViewById(R.id.ProgressBar_activity_news);
-        imageView = findViewById(R.id.newsImage);
-        textView =findViewById(R.id.noInternet);
-        textView.setVisibility(View.GONE);
-        imageView.setVisibility(View.GONE);
+        activityNewsBinding = DataBindingUtil.setContentView(this,R.layout.activity_news);
+
+
+        activityNewsBinding.noInternet.setVisibility(View.GONE);
+        activityNewsBinding.newsImage.setVisibility(View.GONE);
 
         newActivityImplementation = new NewsActivityImplementation();
-            int index = getIntent().getIntExtra(KEY_INDEX, -1);
-            if (index != -1){
-                newsUpdate(index);
-            }
-            else {
-                Toast.makeText(this, "Error index", Toast.LENGTH_SHORT).show();
-            }
+
+        String url = getIntent().getStringExtra(KEY_INDEX);
+        if (url!= null && !url.equals("")) {
+            newsUpdate(url);
+        } else {
+            activityNewsBinding.noInternet.setVisibility(View.VISIBLE);
+            activityNewsBinding.newsImage.setVisibility(View.VISIBLE);
+            showSnackBar("Error in loading the news");
         }
+    }
+
     @SuppressLint("SetJavaScriptEnabled")
-    public void newsUpdate (int index) {
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.setWebViewClient(new WebViewClient() {
+    public void newsUpdate(String url) {
+        activityNewsBinding.WebViewActivityNews.getSettings().setJavaScriptEnabled(true);
+        activityNewsBinding.WebViewActivityNews.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                progressBar.setVisibility(View.VISIBLE);
+                activityNewsBinding.ProgressBarActivityNews.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onPageFinished(WebView view, String url) {
-                progressBar.setVisibility(View.GONE);
+                activityNewsBinding.ProgressBarActivityNews.setVisibility(View.GONE);
+                activityNewsBinding.WebViewActivityNews.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
-                progressBar.setVisibility(View.GONE);
+                activityNewsBinding.ProgressBarActivityNews.setVisibility(View.GONE);
             }
         });
-        if (newActivityImplementation.isOnline(this)){
-            webView.loadUrl(NewStore.getNewsArticlesList().get(index).getUrl());
-        }else {
-            webView.setVisibility(View.GONE);
-            progressBar.setVisibility(View.GONE);
-            textView.setVisibility(View.VISIBLE);
-            imageView.setVisibility(View.VISIBLE);
+        if (newActivityImplementation.isOnline(this)) {
+
+            activityNewsBinding.WebViewActivityNews.loadUrl(url);
+        } else {
+            activityNewsBinding.WebViewActivityNews.setVisibility(View.GONE);
+            activityNewsBinding.ProgressBarActivityNews.setVisibility(View.GONE);
+            activityNewsBinding.noInternet.setVisibility(View.VISIBLE);
+            activityNewsBinding.newsImage.setVisibility(View.VISIBLE);
         }
     }
-    public static void launch(Context context, int index){
-        Intent intent = new Intent(context,NewsActivity.class);
-        intent.putExtra(KEY_INDEX,index);
-        context.startActivity(intent);
+
+    public void showSnackBar(String message) {
+        Snackbar.make(activityNewsBinding.contraintLayout, message, Snackbar.LENGTH_LONG)
+                .setAction("Go back", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        }).show();
     }
 }

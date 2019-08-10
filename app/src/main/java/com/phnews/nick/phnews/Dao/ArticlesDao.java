@@ -20,4 +20,10 @@ public interface ArticlesDao {
     @Query("SELECT * FROM articles ORDER BY publishedAt DESC")
     LiveData<List<Articles>> getAllArticles();
 
+    @Query("SELECT * FROM ARTICLES WHERE `title` LIKE '%'||:searchValue ||'%'")
+    LiveData<List<Articles>> getExactArticles(String searchValue);
+
+    @Query("SELECT * FROM ARTICLES WHERE `title` LIKE :searchValue")
+    LiveData<List<Articles>> getSeartchArticles(String searchValue);
+
 }

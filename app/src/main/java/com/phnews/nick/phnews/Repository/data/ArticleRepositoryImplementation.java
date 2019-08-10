@@ -46,4 +46,14 @@ public class ArticleRepositoryImplementation implements IArticleRespository.show
 
             return articlesRepository.getArticles();
     }
+
+    @Override
+    public LiveData<List<Articles>> getExactArticles(String searchValue) {
+        return articlesRepository.getExactArticles(searchValue);
+    }
+
+    @Override
+    public LiveData<List<Articles>> getSearchArticles(String searchValue) {
+        return articlesRepository.getSearchArticles(searchValue);
+    }
 }

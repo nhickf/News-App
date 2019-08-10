@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.phnews.nick.phnews.utils.DateUtils;
 
 @Entity(tableName = "articles")
 public class Articles {
@@ -70,5 +71,10 @@ public class Articles {
 
     public String getPublishedAt() {
         return publishedAt;
+    }
+
+
+    public String getFormattedDate(){
+        return DateUtils.formatNewsApiDate(publishedAt);
     }
 }
