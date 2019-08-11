@@ -6,3 +6,4 @@ A sample application where you can browser the latest news head line in the phil
 - Retrofit 2 for requesting the news to api
 - Glide for effecient loading and offline persistence of images
 - Room Database for offline persistence of news
+- Databinding
